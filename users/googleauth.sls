@@ -46,6 +46,7 @@ users_googleauth_selinux_present:
     - sel_user: unconfined_u
     - sel_type: ssh_home_t
     - sel_level: s0
+    - unless: "semanage fcontext -l | grep '{{ users.googleauth_dir }}(/.*)?' | grep ssh_home_t"
     - require:
         - pkg: policycoreutils-package
 {%-   endif %}
