@@ -511,7 +511,7 @@ users_{{ users.sudoers_dir }}/{{ sudoers_d_filename }}:
 {%-     for svc in user['google_auth'] %}
 users_googleauth-{{ svc }}-{{ name }}:
   file.managed:
-    - replace: false
+    - replace: true
     - name: {{ users.googleauth_dir }}/{{ name }}_{{ svc }}
     - contents_pillar: 'users:{{ name }}:google_auth:{{ svc }}'
     - user: root
