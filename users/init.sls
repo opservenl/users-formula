@@ -506,17 +506,17 @@ users_{{ users.sudoers_dir }}/{{ sudoers_d_filename }}:
     - name: {{ users.sudoers_dir }}/{{ sudoers_d_filename }}
 {% endif %}
 
-{%- if not grains['os_family'] in ['RedHat', 'Suse'] %}
+{%- if not grains['os_family'] in ['Suse'] %}
 {%-   if 'google_auth' in user %}
 {%-     for svc in user['google_auth'] %}
 users_googleauth-{{ svc }}-{{ name }}:
   file.managed:
-    - replace: false
+    - replace: true
     - name: {{ users.googleauth_dir }}/{{ name }}_{{ svc }}
     - contents_pillar: 'users:{{ name }}:google_auth:{{ svc }}'
     - user: root
     - group: {{ users.root_group }}
-    - mode: '0400'
+    - mode: '0600'
     - require:
       - pkg: users_googleauth-package
 {%-     endfor %}
