@@ -74,8 +74,7 @@ users_googleauth-pam-{{ svc }}-{{ name }}:
 {%- else %}
     - pattern: '^(@include[ \t]*common-auth)'
 {%- endif %}
-{% set graceperiod = 'grace_period=' + grains.get('google_2fa', {}).get('graceperiod', '0') | string %}
-    - repl: '{{ repl }} {{ graceperiod }}\n\1'
+    - repl: '{{ repl }}\n\1'
     - unless: grep pam_google_authenticator.so /etc/pam.d/{{ svc }}
     - backup: .bak
 {%-         endif %}
