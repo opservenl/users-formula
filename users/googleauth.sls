@@ -55,7 +55,9 @@ users_googleauth_selinux_present:
 {%-     if 'google_auth' in user %}
 {%-       for svc in user['google_auth'] %}
 {%-         if user.get('google_2fa', True) %}
-{%-           set repl = '{0}       {1}   {2} {3} {4}{5}/{6}_{7} {8}'.format(
+{#-           FIXME: grace_period does not get updated if changed #}
+{%-           set graceperiod = grains.get('google_2fa', {}).get('graceperiod', -1) %}
+{%-           set repl = '{0}       {1}   {2} {3} {4}{5}/{6}_{7} {8} {9}'.format(
                              'auth',
                              '[success=done new_authtok_reqd=done default=die]',
                              'pam_google_authenticator.so',
@@ -65,6 +67,7 @@ users_googleauth_selinux_present:
                              '${USER}',
                              svc,
                              'echo_verification_code',
+                             'grace_period=' + (graceperiod|string) if graceperiod >= 0 else '',
                          ) %}
 users_googleauth-pam-{{ svc }}-{{ name }}:
   file.replace:
