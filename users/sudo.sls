@@ -27,19 +27,10 @@ users_sudoer-defaults:
           - Defaults   secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 {% if grains['os'] == 'Ubuntu' -%}
-# Remove the commented includedir line from sudoers to avoid sudo errors on some Ubuntu Systems
-remove_sudoers_commented_includedir:
-  file.line:
-    - name: /etc/sudoers
-    - content: '#includedir /etc/sudoers.d'
-    - mode: delete
-
-# Ensure the proper @includedir line is present after removing the commented one
 ensure_sudoers_includedir:
-  file.line:
+  file.replace:
     - name: /etc/sudoers
-    - content: '@includedir /etc/sudoers.d'
-    - mode: ensure
-    - require:
-      - file: remove_sudoers_commented_includedir
+    - pattern: '^[#@]includedir /etc/sudoers.d'
+    - repl: '@includedir /etc/sudoers.d'
+    - append_if_not_found: True
 {% endif %}
