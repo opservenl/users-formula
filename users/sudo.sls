@@ -25,3 +25,12 @@ users_sudoer-defaults:
         - text:
           - Defaults   env_reset
           - Defaults   secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+{% if grains['os'] == 'Ubuntu' -%}
+#Remove the commented includedir line from sudoers to avoid sudo errors on some Ubuntu Systems
+remove_sudoers_commented_includedir:
+  file.line:
+    - name: /etc/sudoers
+    - content: '#includedir /etc/sudoers.d'
+    - mode: delete
+{% endif %}
