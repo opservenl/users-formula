@@ -26,11 +26,12 @@ users_sudoer-defaults:
           - Defaults   env_reset
           - Defaults   secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-{% if grains['os'] == 'Ubuntu' -%}
+{% if grains['os'] == 'Ubuntu' and grains['osmajorrelease']|int >= 20 -%}
+{% set prefix = '#' if grains['osmajorrelease']|int == 20 else '@' -%}
 ensure_sudoers_includedir:
   file.replace:
     - name: /etc/sudoers
-    - pattern: '^[#@]includedir /etc/sudoers.d'
-    - repl: '@includedir /etc/sudoers.d'
+    - pattern: '^(?:#@|#|@)includedir[ \t]+/etc/sudoers\.d[ \t]*$'
+    - repl: '{{ prefix }}includedir /etc/sudoers.d'
     - append_if_not_found: True
 {% endif %}
