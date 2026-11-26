@@ -91,8 +91,12 @@ users_googleauth_selinux_applied:
     - name: {{ users.googleauth_dir }}
 {%-   endif %}
 
+{#- The SSH unit is `ssh` on Debian and Ubuntu; `sshd` there is only an alias that exists while ssh.service is
+    enabled, which it is not with socket activation (Ubuntu 22.10 and later: ssh.socket enabled, ssh.service
+    disabled), so the state failed with "The named service sshd is not available". #}
 sshd:
   service.running:
+    - name: {{ 'ssh' if grains['os_family'] == 'Debian' else 'sshd' }}
     - watch:
       - file: /etc/ssh/sshd_config
 
